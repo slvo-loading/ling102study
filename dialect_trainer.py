@@ -39,7 +39,7 @@ Please keep it open so the audio can play. You may minimize it if needed.
 3. After revealing the answer, mark whether
    you got it correct or incorrect.
           
-4. Incorrect items will reappear every 10 questions.
+4. Incorrect items will reappear every 5 questions.
 
 Commands:
 
@@ -243,7 +243,7 @@ async def main():
 
             question_count += 1
 
-            if incorrect_pool and question_count % 10 == 0:
+            if incorrect_pool and question_count % 5 == 0:
 
                 current_item = await load_item(random.choice(incorrect_pool))
 
