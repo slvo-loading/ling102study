@@ -1,0 +1,3 @@
+skip.json
+__pycache__/
+.venv/
