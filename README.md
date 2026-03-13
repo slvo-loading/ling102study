@@ -85,7 +85,7 @@ Copy and paste:
 python3 -m venv venv
 ```
 
-Then activate it.
+Then activate it. The environment must be activated each time you open a new terminal session.
 
 ### Mac / Linux
 
