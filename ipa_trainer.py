@@ -60,8 +60,9 @@ Wait until the ">" character appears before entering any commands.
 4. After revealing the answer, mark whether
 you got it correct or incorrect.
 
-5. If you SKIP a character it will be skipped forever.
-To restore it, remove it from skip.json.
+5. If you SKIP a character it will be skipped forever so that you
+can rule out characters not for this class.
+To restore it, remove it from skip.json file.
 
 6. Incorrect characters will reappear every 5 questions.
 
@@ -302,6 +303,9 @@ Commands
                 await play_audio(page, item.audio)
 
             elif cmd == "5":
+
+                if item in incorrect_pool:
+                    incorrect_pool.remove(item)
 
                 skipped.add(item.char)
                 save_skip()
