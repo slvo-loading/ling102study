@@ -25,10 +25,6 @@ https://www.python.org/downloads/
 Add Python to PATH
 ```
 
-Example:
-
-![Add Python to PATH](https://i.imgur.com/x1b7C9E.png)
-
 5. Click **Install Now**.
 
 Wait for Python to finish installing.
@@ -48,12 +44,6 @@ Terminal
 
 3. Press **Enter**
 
-A window will open that looks like this:
-
-```
-$
-```
-
 ---
 
 ## Windows
@@ -67,11 +57,6 @@ cmd
 
 3. Click **Command Prompt**
 
-A window will open that looks like this:
-
-```
-C:\Users\YourName>
-```
 
 ---
 
