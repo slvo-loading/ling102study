@@ -87,7 +87,7 @@ If you see an error, restart your computer and try again.
 Copy and paste this command into the terminal:
 
 ```bash
-git clone https://github.com/slvo-loading/ling102-study-tools.git
+git clone https://github.com/slvo-loading/ling102study.git
 ```
 
 Then run:
@@ -103,7 +103,7 @@ cd ling102-study-tools
 1. Go to the GitHub page:
 
 ```
-https://github.com/slvo-loading/ling102-study-tools
+https://github.com/slvo-loading/ling102study
 ```
 
 2. Click the green **Code** button.
