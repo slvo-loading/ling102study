@@ -53,14 +53,17 @@ Please keep it open so the audio can play. You may minimize it if needed.
 
 2. Listen to the audio or examine the character
 and write the voicing, manner, and placement.
+          
+3. Please avoid typing while the audio is playing. 
+Wait until the ">" character appears before entering any commands.
 
-3. After revealing the answer, mark whether
+4. After revealing the answer, mark whether
 you got it correct or incorrect.
 
-4. If you SKIP a character it will be skipped forever.
+5. If you SKIP a character it will be skipped forever.
 To restore it, remove it from skip.json.
 
-5. Incorrect characters will reappear every 5 questions.
+6. Incorrect characters will reappear every 5 questions.
 
 Commands:
 

@@ -99,12 +99,6 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
-Your terminal should now look like this:
-
-```
-(venv)
-```
-
 ---
 
 # STEP 5 — Install Required Packages

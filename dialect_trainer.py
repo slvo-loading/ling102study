@@ -35,11 +35,14 @@ Please keep it open so the audio can play. You may minimize it if needed.
 
 2. Listen to the audio and narrowly transcribe
    the pronunciation on paper.
+          
+3. Please avoid typing while the audio is playing. 
+Wait until the ">" character appears before entering any commands.
 
-3. After revealing the answer, mark whether
+4. After revealing the answer, mark whether
    you got it correct or incorrect.
           
-4. Incorrect items will reappear every 5 questions.
+5. Incorrect items will reappear every 5 questions.
 
 Commands:
 
