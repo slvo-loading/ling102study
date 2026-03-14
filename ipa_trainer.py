@@ -4,6 +4,7 @@ import json
 import sys
 from dataclasses import dataclass
 from typing import List
+from collections import deque
 
 from playwright.async_api import async_playwright, Page
 
@@ -23,7 +24,7 @@ class Item:
     audio: List[str]
 
 
-# -------------------- skip list --------------------
+# ---------------- skip list ----------------
 
 try:
     with open(SKIP_FILE) as f:
@@ -37,7 +38,7 @@ def save_skip():
         json.dump(list(skipped), f)
 
 
-# -------------------- welcome --------------------
+# ---------------- welcome ----------------
 
 def show_welcome():
 
@@ -49,22 +50,12 @@ def show_welcome():
 Instructions:
 
 1. After pressing ENTER, a browser window will open.
-Please keep it open so the audio can play. You may minimize it if needed.
+Keep it open so audio can play.
 
-2. Listen to the audio or examine the character
-and write the voicing, manner, and placement.
-          
-3. Please avoid typing while the audio is playing. 
-Wait until the ">" character appears before entering any commands.
+2. Listen to the audio and identify:
+   voicing, place, and manner.
 
-4. After revealing the answer, mark whether
-you got it correct or incorrect.
-
-5. If you SKIP a character it will be skipped forever so that you
-can rule out characters not for this class.
-To restore it, remove it from skip.json file.
-
-6. Incorrect characters will reappear every 5 questions.
+3. Wait until ">" appears before typing.
 
 Commands:
 
@@ -75,15 +66,14 @@ Commands:
 5 = skip symbol
 6 = quit
 
-----------------------------------------
-
-Press ENTER to start.
+Incorrect symbols reappear 5 questions later.
+Correct ones will not appear again this session.
 """)
 
-    input()
+    input("\nPress ENTER to start.\n")
 
 
-# -------------------- loading indicator --------------------
+# ---------------- loading indicator ----------------
 
 def show_loading(msg="\n⏳ Loading next character..."):
     sys.stdout.write("\r" + msg)
@@ -95,7 +85,7 @@ def clear_loading():
     sys.stdout.flush()
 
 
-# -------------------- audio --------------------
+# ---------------- audio ----------------
 
 async def play_audio(page: Page, audio_ids):
 
@@ -109,7 +99,7 @@ async def play_audio(page: Page, audio_ids):
         await asyncio.sleep(1.8)
 
 
-# -------------------- symbol extraction --------------------
+# ---------------- symbol extraction ----------------
 
 async def get_random_symbol(page: Page) -> Item:
 
@@ -122,7 +112,7 @@ async def get_random_symbol(page: Page) -> Item:
         headers = await table.query_selector_all("thead th")
         rows = await table.query_selector_all("tbody tr")
 
-        if len(headers) < 2 or len(rows) == 0:
+        if len(headers) < 2 or not rows:
             continue
 
         table_class = await table.get_attribute("class") or ""
@@ -205,7 +195,7 @@ async def get_random_symbol(page: Page) -> Item:
         )
 
 
-# -------------------- browser --------------------
+# ---------------- browser ----------------
 
 async def start_browser():
 
@@ -216,14 +206,10 @@ async def start_browser():
         args=[
             "--window-size=200,200",
             "--disable-backgrounding-occluded-windows",
-            "--disable-features=CalculateNativeWinOcclusion"
         ]
     )
 
-    context = await browser.new_context(
-        viewport={"width": 200, "height": 200}
-    )
-
+    context = await browser.new_context(viewport={"width": 200, "height": 200})
     page = await context.new_page()
 
     await page.goto(INDEX_URL)
@@ -231,7 +217,7 @@ async def start_browser():
     return p, browser, page
 
 
-# -------------------- main --------------------
+# ---------------- main ----------------
 
 async def main():
 
@@ -241,34 +227,41 @@ async def main():
 
     p, browser, page = await start_browser()
 
-    incorrect_pool: List[Item] = []
+    correct_pool = set()
+    incorrect_queue = deque()
+
     question_count = 0
 
     while True:
 
         question_count += 1
 
-        if incorrect_pool and question_count % 5 == 0:
+        # check scheduled incorrect items
+        if incorrect_queue and incorrect_queue[0][0] <= question_count:
 
-            item = random.choice(incorrect_pool)
+            _, item = incorrect_queue.popleft()
             print("\n🔁 Reviewing incorrect symbol")
 
         else:
 
             show_loading()
-            item = await get_random_symbol(page)
+
+            while True:
+                item = await get_random_symbol(page)
+                if item.char not in correct_pool:
+                    break
+
             clear_loading()
 
-        print("\n📝 New Character")
-        print("Character:", item.char)
+        print("\n📝 Character:", item.char)
 
         print("""
 Commands
 1 = show answer
-2 = mark correct
-3 = mark incorrect
+2 = correct
+3 = incorrect
 4 = repeat audio
-5 = skip symbol
+5 = skip
 6 = quit
 """)
 
@@ -286,16 +279,14 @@ Commands
 
             elif cmd == "2":
 
-                if item in incorrect_pool:
-                    incorrect_pool.remove(item)
-
-                print("✅ marked correct")
+                correct_pool.add(item.char)
+                print("✅ Correct")
                 break
 
             elif cmd == "3":
 
-                incorrect_pool.append(item)
-                print("❌ marked incorrect")
+                incorrect_queue.append((question_count + 5, item))
+                print("❌ Incorrect (will retry in 5 questions)")
                 break
 
             elif cmd == "4":
@@ -304,13 +295,11 @@ Commands
 
             elif cmd == "5":
 
-                if item in incorrect_pool:
-                    incorrect_pool.remove(item)
-
                 skipped.add(item.char)
+                correct_pool.add(item.char)
                 save_skip()
 
-                print("Skipped:", item.char)
+                print("⏭ Skipped:", item.char)
                 break
 
             elif cmd == "6":
