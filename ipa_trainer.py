@@ -10,6 +10,7 @@ from playwright.async_api import async_playwright, Page
 
 INDEX_URL = "https://jbdowse.com/ipa/"
 SKIP_FILE = "skip.json"
+TOTAL_SYMBOLS = 118
 
 
 @dataclass
@@ -311,6 +312,11 @@ Commands
             else:
 
                 print("Use numbers 1–6")
+
+        if len(correct_pool) == TOTAL_SYMBOLS:
+            break
+
+    print('Successfully completed all symbols 🎉')
 
 
 if __name__ == "__main__":
