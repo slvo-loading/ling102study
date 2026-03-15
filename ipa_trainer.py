@@ -255,6 +255,7 @@ async def main():
             clear_loading()
 
         print("\n📝 Character:", item.char)
+        print(f"Correct: {len(correct_pool)} / {TOTAL_SYMBOLS}" )
 
         print("""
 Commands
